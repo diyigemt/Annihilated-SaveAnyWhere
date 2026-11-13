@@ -17,9 +17,9 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: 8.0.x
 
@@ -60,12 +60,12 @@ jobs:
           ls -la dist
 
       # 上传目录而不是 zip，避免下载到"压缩包套压缩包"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SaveAnywhere-${{ steps.ver.outputs.version }}
           path: dist/mod/
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: SaveAnywhere-${{ steps.ver.outputs.version }}-with-BepInEx
           path: dist/full/
