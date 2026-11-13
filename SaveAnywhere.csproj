@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <AssemblyName>SaveAnywhere</AssemblyName>
+    <RootNamespace>SaveAnywhere</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+  <PropertyGroup>
+    <RefDir>$(MSBuildThisFileDirectory)lib</RefDir>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="$(RefDir)/BepInEx.Core.dll" Private="false" />
+    <Reference Include="$(RefDir)/BepInEx.Unity.IL2CPP.dll" Private="false" />
+    <Reference Include="$(RefDir)/Il2CppInterop.Runtime.dll" Private="false" />
+    <Reference Include="$(RefDir)/Il2CppInterop.Common.dll" Private="false" />
+    <Reference Include="$(RefDir)/0Harmony.dll" Private="false" />
+    <Reference Include="$(RefDir)/Il2Cppmscorlib.dll" Private="false" />
+    <Reference Include="$(RefDir)/Il2CppSystem.Core.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.CoreModule.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.IMGUIModule.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.TextRenderingModule.dll" Private="false" />
+    <Reference Include="$(RefDir)/Unity.InputSystem.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.ScreenCaptureModule.dll" Private="false" />
+    <Reference Include="$(RefDir)/Elringus.Naninovel.Runtime.dll" Private="false" />
+    <Reference Include="$(RefDir)/Assembly-CSharp.dll" Private="false" />
+    <Reference Include="$(RefDir)/Unity.TextMeshPro.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.UI.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.UIModule.dll" Private="false" />
+    <Reference Include="$(RefDir)/DOTween.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.JSONSerializeModule.dll" Private="false" />
+    <Reference Include="$(RefDir)/UnityEngine.InputLegacyModule.dll" Private="false" />
+  </ItemGroup>
+</Project>

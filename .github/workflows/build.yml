@@ -1,0 +1,83 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+env:
+  BEPINEX_URL: https://builds.bepinex.dev/projects/bepinex_be/793/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.793%2Bdbc82f0.zip
+  BEPINEX_SHA256: 5b63d7d0e92a2448ccd13b738ff95ff1cc1026c6d718555d4df8e6c824953ac4
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Read version
+        id: ver
+        run: |
+          version=$(sed -n 's/.*const string Version = "\(.*\)";.*/\1/p' Plugin.cs)
+          test -n "$version"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          if [[ "$GITHUB_REF" == refs/tags/v* && "${GITHUB_REF_NAME#v}" != "$version" ]]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match Plugin.Version $version"
+            exit 1
+          fi
+
+      - name: Build
+        run: dotnet build SaveAnywhere.csproj -c Release
+
+      - name: Download BepInEx
+        run: |
+          curl -fsSL -o bepinex.zip "$BEPINEX_URL"
+          echo "$BEPINEX_SHA256  bepinex.zip" | sha256sum -c -
+
+      - name: Package
+        run: |
+          v=${{ steps.ver.outputs.version }}
+          dll=bin/Release/net6.0/SaveAnywhere.dll
+
+          mkdir -p dist/mod/BepInEx/plugins
+          cp "$dll" dist/mod/BepInEx/plugins/
+
+          mkdir -p dist/full
+          unzip -q bepinex.zip -d dist/full
+          mkdir -p dist/full/BepInEx/plugins
+          cp "$dll" dist/full/BepInEx/plugins/
+
+          (cd dist/mod && zip -qr "../SaveAnywhere-$v.zip" .)
+          (cd dist/full && zip -qr "../SaveAnywhere-$v-with-BepInEx.zip" .)
+          ls -la dist
+
+      # 上传目录而不是 zip，避免下载到"压缩包套压缩包"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SaveAnywhere-${{ steps.ver.outputs.version }}
+          path: dist/mod/
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SaveAnywhere-${{ steps.ver.outputs.version }}-with-BepInEx
+          path: dist/full/
+          include-hidden-files: true
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          v=${{ steps.ver.outputs.version }}
+          gh release create "$GITHUB_REF_NAME" \
+            "dist/SaveAnywhere-$v.zip" \
+            "dist/SaveAnywhere-$v-with-BepInEx.zip" \
+            --title "SaveAnywhere $v" --generate-notes
